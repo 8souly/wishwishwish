@@ -2,11 +2,11 @@
     --bg-color: #0f172a;
     --text-color: #f1f5f9;
     --accent-color: #38bdf8;
-    --gold-color: #fceda3; /* ปรับสีทองให้อ่อนลงดูแพงขึ้น */
+    --gold-color: #fceda3;
     --gold-dark: #b48a3c;
     --danger-color: #f87171;
     --font-main: 'Poppins', sans-serif;
-    --font-serif: 'Playfair Display', serif; /* ฟอนต์ใหม่สำหรับการ์ด */
+    --font-serif: 'Playfair Display', serif;
     --font-mono: 'Roboto Mono', monospace;
     
     --card-c1: #1e3a8a;
@@ -19,7 +19,9 @@ body {
     font-family: var(--font-main);
     color: var(--text-color);
     height: 100vh;
-    overflow: hidden;
+    /* เปลี่ยนเป็น min-height เพื่อรองรับ mobile scroll */
+    min-height: 100vh;
+    overflow: hidden; /* ยังคง hidden เพื่อกันหิมะเกิน แต่ content ภายในจัดการด้วย app-container */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,6 +29,8 @@ body {
     background: linear-gradient(-45deg, #020617, #1e1b4b, #0f172a, #172554);
     background-size: 400% 400%;
     animation: gradientBG 20s ease infinite;
+    /* ป้องกันการเด้งของจอใน iOS */
+    -webkit-text-size-adjust: 100%;
 }
 
 @keyframes gradientBG {
@@ -40,35 +44,54 @@ body {
     z-index: -1; pointer-events: none;
 }
 
-/* --- Layout --- */
+/* --- Layout (Responsive Fixes) --- */
 .app-container {
-    width: 100%; max-width: 500px; height: 650px;
-    position: relative; display: flex;
-    justify-content: center; align-items: center; z-index: 10;
+    width: 90%; /* เปลี่ยนจาก fixed px เป็น % */
+    max-width: 500px; 
+    /* ใช้ min-height แทน height ตายตัว เพื่อยืดหยุ่น */
+    min-height: 600px;
+    height: auto;
+    position: relative; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    z-index: 10;
+    /* จัดการ Layout มือถือ */
+    padding: 20px 0;
 }
 
 .screen {
-    position: absolute; width: 100%; padding: 20px;
-    text-align: center; opacity: 0; visibility: hidden;
+    position: absolute; 
+    width: 100%; 
+    padding: 0 10px; /* เพิ่ม padding ด้านข้างกันชิดขอบ */
+    text-align: center; 
+    opacity: 0; 
+    visibility: hidden;
     transform: translateY(20px);
     transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    /* ป้องกันการแตะทะลุ */
+    pointer-events: none;
 }
 
 .screen.active {
-    opacity: 1; visibility: visible;
-    transform: translateY(0); z-index: 2;
+    opacity: 1; 
+    visibility: visible;
+    transform: translateY(0); 
+    z-index: 2;
+    pointer-events: auto;
 }
 
 .hidden { display: none !important; }
 
 /* --- Text & Inputs --- */
 .title {
-    font-size: 3rem; font-weight: 700; margin-bottom: 10px;
+    font-size: 3rem; /* Desktop size */
+    font-weight: 700; margin-bottom: 10px;
     background: linear-gradient(to right, #fff, #94a3b8);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.subtitle, .prompt-text { color: #cbd5e1; margin-bottom: 30px; font-size: 1.1rem; }
-.instruction-text { margin-bottom: 20px; font-size: 0.9rem; opacity: 0.7; }
+.subtitle, .prompt-text { color: #cbd5e1; margin-bottom: 25px; font-size: 1.1rem; }
+.instruction-text { margin-bottom: 15px; font-size: 0.9rem; opacity: 0.7; }
 .hint-text { font-size: 0.8rem; color: #64748b; margin-top: 5px; margin-bottom: 20px; }
 .font-mono { font-family: var(--font-mono); }
 
@@ -78,6 +101,8 @@ input, textarea {
     border-radius: 12px; padding: 15px; color: white;
     font-size: 1rem; font-family: inherit; outline: none;
     margin-bottom: 20px; transition: 0.3s; resize: none;
+    /* ป้องกัน iOS zoom เวลาจิ้ม input */
+    font-size: 16px; 
 }
 input:focus, textarea:focus { border-color: var(--accent-color); background: rgba(255, 255, 255, 0.1); }
 
@@ -87,6 +112,8 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
     padding: 12px 30px; border-radius: 50px;
     font-size: 1rem; font-weight: 600; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+    /* ป้องกันการเลือก text บนปุ่ม */
+    user-select: none; -webkit-user-select: none;
 }
 .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
 
@@ -103,26 +130,46 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
     background: none; border: none; color: #64748b; margin-top: 25px;
     cursor: pointer; text-decoration: underline; font-size: 0.9rem;
 }
-
 .btn-link-small {
     background: none; border: none; color: var(--accent-color);
     margin-top: 5px; cursor: pointer; text-decoration: none; font-size: 0.8rem;
     opacity: 0.7; transition: 0.3s;
 }
-.btn-link-small:hover { opacity: 1; text-decoration: underline; }
 
 .result-footer { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
 .small-timer-label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; }
 
-/* --- Card Styles (Redesigned) --- */
-.card-container { perspective: 1000px; width: 300px; height: 420px; margin: 0 auto; cursor: pointer; position: relative; z-index: 5; }
-.card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+/* --- Card Styles (Fixing the Flip Bug) --- */
+.card-container { 
+    perspective: 1000px; 
+    width: 300px; 
+    height: 420px; 
+    margin: 0 auto; 
+    cursor: pointer; 
+    position: relative; 
+    z-index: 5; 
+    /* แก้ปัญหา tap highlight บนมือถือ */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card { 
+    width: 100%; height: 100%; 
+    position: relative; 
+    transform-style: preserve-3d; 
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
 .card.flipped { transform: rotateY(180deg); }
 
 .card-front, .card-back { 
-    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-    border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6); overflow: hidden; 
+    position: absolute; 
+    width: 100%; height: 100%; 
+    /* KEY FIX: เพิ่ม -webkit-backface-visibility สำหรับ iOS */
+    -webkit-backface-visibility: hidden; 
+    backface-visibility: hidden; 
+    border-radius: 12px; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6); 
+    overflow: hidden; 
 }
 
 /* Front Design */
@@ -130,9 +177,10 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
     background: linear-gradient(135deg, var(--card-c1), var(--card-c2), var(--card-c1)); 
     background-size: 200% 200%; animation: gradientBG 8s ease infinite; 
     border: 1px solid rgba(255,255,255,0.1);
+    z-index: 2; /* ให้แน่ใจว่าด้านหน้าอยู่บนตอนเริ่ม */
+    transform: rotateY(0deg); /* Explicitly set */
 }
 
-/* Noise Texture */
 .noise-texture {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
@@ -149,9 +197,11 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
 
 /* Back Design */
 .card-back { 
-    background: #fdfbf7; color: #1e293b; transform: rotateY(180deg); padding: 15px; 
-    /* Subtle paper texture */
+    background: #fdfbf7; color: #1e293b; 
+    transform: rotateY(180deg); /* หมุนรอไว้เลย 180 องศา */
+    padding: 15px; 
     background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    z-index: 1;
 }
 
 .card-border {
@@ -159,7 +209,6 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     padding: 20px; position: relative;
 }
-/* Corner Accents */
 .card-border::before, .card-border::after {
     content: ''; position: absolute; width: 10px; height: 10px;
     border: 2px solid var(--gold-dark); transition: 0.3s;
@@ -171,6 +220,7 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
 .message-text { 
     font-family: var(--font-serif); font-size: 1.2rem; line-height: 1.6; 
     font-weight: 500; color: #334155; margin-bottom: 20px; text-align: center;
+    word-wrap: break-word; /* ป้องกันข้อความล้น */
 }
 .separator { width: 30px; height: 2px; background: var(--gold-color); margin: 0 auto 15px auto; }
 .sender-name { font-size: 0.9rem; color: #64748b; font-style: italic; font-family: var(--font-main); }
@@ -178,17 +228,18 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
 .sheen-effect { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); pointer-events: none; transition: left 0.7s ease; }
 .card-container:hover .card-front .sheen-effect { left: 125%; }
 
-/* --- Modals (Shared Styles) --- */
+/* --- Modals --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.7); z-index: 100;
     display: flex; justify-content: center; align-items: center;
     opacity: 0; visibility: hidden; transition: 0.3s;
+    padding: 20px; /* เพิ่ม padding กันชิดขอบจอ */
 }
 .modal-overlay.active-modal { opacity: 1; visibility: visible; }
 .modal-box {
     background: #1e293b; padding: 30px; border-radius: 20px;
-    width: 90%; max-width: 400px; text-align: center;
+    width: 100%; max-width: 400px; text-align: center;
     border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -197,12 +248,11 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
 .modal-box p { color: #cbd5e1; margin-bottom: 25px; line-height: 1.6; }
 .modal-actions { display: flex; gap: 10px; justify-content: center; }
 
-/* Buttons */
 .btn-confirm { background: var(--gold-color); color: #5c4002; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .btn-cancel { background: transparent; color: #94a3b8; border: 1px solid #475569; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 
 /* Timer & Cooldown */
-.timer-display { font-family: var(--font-mono); font-size: 3.5rem; font-weight: 500; color: var(--text-color); margin: 10px 0; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+.timer-display { font-family: var(--font-mono); font-size: 3rem; /* ลดขนาดลงนิดหน่อยสำหรับมือถือ */ font-weight: 500; color: var(--text-color); margin: 10px 0; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
 .secret-area { margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
 .secret-area input { text-align: center; width: 80%; }
 .actions { transition: all 0.5s ease; opacity: 1; pointer-events: auto; }
@@ -213,3 +263,52 @@ input:focus, textarea:focus { border-color: var(--accent-color); background: rgb
 .fade-in { animation: fadeIn 1s ease forwards; }
 .fade-in-delay { opacity: 0; animation: fadeIn 1s ease 0.5s forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   MOBILE RESPONSIVE MEDIA QUERIES
+   ========================================= */
+@media (max-width: 600px) {
+    .title { font-size: 2.2rem; }
+    .subtitle { font-size: 1rem; margin-bottom: 20px; }
+    
+    .app-container {
+        /* ปรับความสูง container บนมือถือ */
+        min-height: 100vh;
+        height: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* ย่อขนาดการ์ดลงสำหรับจอเล็ก */
+    .card-container {
+        width: 260px;
+        height: 360px;
+    }
+
+    .card-title { font-size: 1.5rem; }
+    .message-text { font-size: 1rem; }
+    
+    /* ปรับขนาด Timer */
+    .timer-display { font-size: 2.5rem; }
+    
+    /* ปรับปุ่มให้กดง่ายขึ้น */
+    .btn-primary, .btn-secondary {
+        padding: 12px 25px;
+        width: 100%; /* ปุ่มเต็มความกว้าง */
+        max-width: 200px;
+    }
+
+    .modal-actions {
+        flex-direction: column; /* ปุ่มเรียงแนวตั้งบนมือถือ */
+        gap: 10px;
+    }
+    
+    .btn-confirm, .btn-cancel { width: 100%; }
+}
+
+@media (max-height: 700px) {
+    /* สำหรับมือถือแนวนอน หรือจอเตี้ย */
+    .app-container { padding-top: 10px; }
+    .title { margin-bottom: 5px; font-size: 2rem; }
+    .card-container { height: 320px; width: 240px; }
+}
