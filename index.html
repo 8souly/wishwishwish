@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Wish - Christmas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="snowCanvas"></canvas>
+
+    <div class="app-container">
+        
+        <section id="screen-welcome" class="screen active">
+            <h1 class="title fade-in">Make a Wish</h1>
+            <p class="subtitle fade-in-delay">Let the snow carry your wish tonight.</p>
+            <button class="btn-primary" onclick="startApp()">Start</button>
+        </section>
+
+        <section id="screen-name" class="screen hidden">
+            <h2 class="prompt-text">What's your name?</h2>
+            <input type="text" id="username" placeholder="Type your name..." autocomplete="off">
+            <button class="btn-primary" onclick="goToScreen('screen-wish')">Next</button>
+        </section>
+
+        <section id="screen-wish" class="screen hidden">
+            <h2 class="prompt-text">Your Wish...</h2>
+            <textarea id="user-wish" placeholder="Type your wish here..." rows="4"></textarea>
+            <p class="hint-text">*Think carefully. You can only wish once a day.</p>
+            <button class="btn-primary" onclick="showConfirmModal()">Send Wish</button>
+        </section>
+
+        <section id="screen-result" class="screen hidden">
+            <p class="instruction-text fade-in-delay" style="animation-delay: 0.8s;">Tap card to open / close</p>
+            
+            <div class="card-container" onclick="toggleCard(this)">
+                <div class="card">
+                    <div class="card-front" id="cardFrontDynamic">
+                        <div class="noise-texture"></div> <div class="sheen-effect"></div>
+                        <div class="front-content">
+                            <i class="fa-solid fa-star card-icon-deco"></i>
+                            <p class="card-title">A Wish For You</p>
+                            <p class="card-sub">Open to reveal</p>
+                        </div>
+                    </div>
+                    <div class="card-back" id="capture-area">
+                        <div class="card-border"> <div class="card-content">
+                                <i class="fa-solid fa-quote-left quote-icon"></i>
+                                <p id="final-message" class="message-text">...</p>
+                                <div class="separator"></div>
+                                <p id="display-name" class="sender-name">...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions disabled" id="action-buttons">
+                <button class="btn-secondary" onclick="downloadCard(event)"><i class="fa-solid fa-download"></i> Save Card</button>
+            </div>
+            
+            <div class="result-footer fade-in-delay" style="animation-delay: 1s;">
+                <p class="small-timer-label">Next wish in: <span id="result-timer" class="font-mono">00:00:00</span></p>
+                <button class="btn-link-small" onclick="goToCooldownFromResult()">I have a secret code</button>
+            </div>
+        </section>
+
+        <section id="screen-cooldown" class="screen hidden">
+            <i class="fa-regular fa-clock" style="font-size: 3rem; color: var(--gold-color); margin-bottom: 20px;"></i>
+            <h2 class="prompt-text">Next wish available in:</h2>
+            
+            <div id="countdown-timer" class="timer-display">00:00:00</div>
+            
+            <p class="subtitle" style="font-size: 0.9rem; margin-top: 10px;">Magic takes time to recharge.</p>
+            
+            <div class="secret-area">
+                <p class="hint-text">Have a secret code?</p>
+                <input type="text" id="secret-code" placeholder="Enter code..." autocomplete="off">
+                <button class="btn-secondary" onclick="checkSecretCode()">Unlock Now</button>
+            </div>
+            
+            <button id="btn-back-cooldown" class="btn-link hidden" onclick="goBackToResult()">Back to Card</button> 
+        </section>
+
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3>Are you sure?</h3>
+            <p>Once sent, the stars need 24 hours to process your wish before you can make another one.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmSendWish()">Yes, I'm sure</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <i class="fa-solid fa-circle-check" style="color: #4ade80; font-size: 3.5rem; margin-bottom: 20px;"></i>
+            <h3>Cooldown Reset!</h3>
+            <p>The stars are listening again.</p>
+        </div>
+    </div>
+
+    <div id="error-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <i class="fa-solid fa-circle-xmark" style="color: var(--danger-color); font-size: 3.5rem; margin-bottom: 20px;"></i>
+            <h3>Invalid Code</h3>
+            <p>That code didn't work. Please try again.</p>
+            <button class="btn-cancel" onclick="closeErrorModal()">Close</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Created by <span id="my-credit">Kim</span> | Merry Christmas</p>
+    </footer>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
