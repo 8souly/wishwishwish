@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make a Wish - Christmas</title>
+    <title>Make a Wish</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -17,7 +17,14 @@
         <section id="screen-welcome" class="screen active">
             <h1 class="title fade-in">Make a Wish</h1>
             <p class="subtitle fade-in-delay">Let the snow carry your wish tonight.</p>
-            <button class="btn-primary" onclick="startApp()">Start</button>
+            
+            <div class="welcome-actions">
+                <button class="btn-primary" onclick="startApp()">Start</button>
+            </div>
+
+            <div id="secret-trigger-btn" class="secret-heart-container fade-in-delay" style="animation-delay: 1.5s;" onclick="openSpecialModal()">
+                <i class="fa-solid fa-heart"></i>
+            </div>
         </section>
 
         <section id="screen-name" class="screen hidden">
@@ -39,15 +46,17 @@
             <div class="card-container" onclick="toggleCard(this)">
                 <div class="card">
                     <div class="card-front" id="cardFrontDynamic">
-                        <div class="noise-texture"></div> <div class="sheen-effect"></div>
+                        <div class="noise-texture"></div>
+                        <div class="sheen-effect"></div>
                         <div class="front-content">
-                            <i class="fa-solid fa-star card-icon-deco"></i>
-                            <p class="card-title">A Wish For You</p>
+                            <i id="card-front-icon" class="fa-solid fa-gift card-icon-deco"></i>
+                            <p id="card-front-text" class="card-title">A Wish For You</p>
                             <p class="card-sub">Open to reveal</p>
                         </div>
                     </div>
                     <div class="card-back" id="capture-area">
-                        <div class="card-border"> <div class="card-content">
+                        <div class="card-border">
+                            <div class="card-content">
                                 <i class="fa-solid fa-quote-left quote-icon"></i>
                                 <p id="final-message" class="message-text">...</p>
                                 <div class="separator"></div>
@@ -71,9 +80,7 @@
         <section id="screen-cooldown" class="screen hidden">
             <i class="fa-regular fa-clock" style="font-size: 3rem; color: var(--gold-color); margin-bottom: 20px;"></i>
             <h2 class="prompt-text">Next wish available in:</h2>
-            
             <div id="countdown-timer" class="timer-display">00:00:00</div>
-            
             <p class="subtitle" style="font-size: 0.9rem; margin-top: 10px;">Magic takes time to recharge.</p>
             
             <div class="secret-area">
@@ -81,7 +88,6 @@
                 <input type="text" id="secret-code" placeholder="Enter code..." autocomplete="off">
                 <button class="btn-secondary" onclick="checkSecretCode()">Unlock Now</button>
             </div>
-            
             <button id="btn-back-cooldown" class="btn-link hidden" onclick="goBackToResult()">Back to Card</button> 
         </section>
 
@@ -90,7 +96,7 @@
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal-box">
             <h3>Are you sure?</h3>
-            <p>Once sent, the stars need 24 hours to process your wish before you can make another one.</p>
+            <p>Once sent, the stars need 24 hours to process your wish.</p>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeConfirmModal()">Cancel</button>
                 <button class="btn-confirm" onclick="confirmSendWish()">Yes, I'm sure</button>
@@ -101,7 +107,7 @@
     <div id="success-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <i class="fa-solid fa-circle-check" style="color: #4ade80; font-size: 3.5rem; margin-bottom: 20px;"></i>
-            <h3>Cooldown Reset!</h3>
+            <h3>Success!</h3>
             <p>The stars are listening again.</p>
         </div>
     </div>
@@ -115,8 +121,21 @@
         </div>
     </div>
 
+    <div id="special-login-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <i class="fa-solid fa-heart" style="color: #fb7185; font-size: 2.5rem; margin-bottom: 15px;"></i>
+            <h3>For Special One</h3>
+            <p>Enter the secret password to unlock my heart.</p>
+            <input type="password" id="special-password-input" placeholder="Password..." class="modal-input">
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button class="btn-cancel" onclick="closeSpecialModal()">Cancel</button>
+                <button class="btn-confirm" style="background: #fb7185; color: white;" onclick="checkSpecialPassword()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
-        <p>Created by <span id="my-credit">Kim</span> | Merry Christmas</p>
+        <p>Created by <span id="my-credit">YourName</span> | Merry Christmas</p>
     </footer>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
